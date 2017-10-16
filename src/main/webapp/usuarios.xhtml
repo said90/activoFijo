@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./plantilla.xhtml">
+
+
+
+            <ui:define name="content">
+                <br/>
+                <br/>
+                <br/>
+
+
+                <p:separator/>
+                <br/>
+
+                <!-- Div que contiene el dataTable que muestra los producto -->            
+                <div>
+                    <p:panel  header="USUARIOS REGISTRADOS" toggleable="true" toggleSpeed="1000">
+                        <h:form id="frmMostrar">
+                            <p:dataTable var="usuario" value="#{personaController.lstPersona}"
+                                         emptyMessage="No hay usuarios en la base de datos"
+                                         paginator="true" rows="10" paginatorPosition="bottom"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10" reflow="true"   widgetVar="data" >
+
+                                <f:facet name="header" >
+                                    <p:outputPanel style="height: available">
+                                        <h:outputText value="Buscar en todos los campos" style="padding-right: 20px"/>
+                                        <p:inputText  id="globalFilter" onkeyup= "PF('data').filter()" placeholder="Ingrese cualquier palabra o numero"  style="width: 350px"/> 
+                                        <p:commandButton  
+                                            value="Registrar usuario" icon="ui-icon-pencil"
+                                            onclick="PF('dlgRegistrar').show();">
+                                            <p:effect type="pulsate" event="click" />
+                                        </p:commandButton>
+                                    </p:outputPanel>
+                                    <p:separator/>
+                                    <BR/>
+
+                                </f:facet>
+
+
+
+                                <p:column headerText="Id Usuario"   style="text-align: center">
+                                    <h:outputText value="#{usuario.idPersona}"  />
+                                </p:column>
+
+                                <p:column headerText="Nombre de usuario"  style="text-align: center">
+                                    <p:outputLabel value="#{usuario.nombres}" />
+                                </p:column>
+
+                                <p:column headerText="Apellido de usuario"  style="text-align: center">
+                                    <p:outputLabel value="#{usuario.apellidos}" />
+                                </p:column>
+
+
+                                <p:column headerText="Cargo"  style="text-align: center">
+                                    <p:outputLabel value="#{usuario.cargo.cargo}" />
+                                </p:column>
+
+                                <p:column headerText="Establecimiento"  style="text-align: center">
+                                    <p:outputLabel value="#{usuario.idEstablecimiento.establecimiento}"/>
+                                </p:column>
+                                <p:column headerText="MODIFICAR" style="text-align: center;">
+                                    <p:commandButton icon="ui-icon-pencil" oncomplete="PF('dlgmodificar').show();" 
+                                                     update=":frmModificar" > 
+                                        <f:setPropertyActionListener target="#{cargoController.cargo}" value="#{cargo}"/>
+
+                                    </p:commandButton>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </h:form>
+                    </p:panel>>
+                </div>
+                <!-- Div que contiene el dialogo para Registrar el producto -->            
+                <div>
+                    <p:dialog id="dlg" header="Registrar Usuario" showEffect="fade" hideEffect="fade"
+                              widgetVar="dlgRegistrar" modal="true" draggable="false" resizable="false" minWidth="400"  >
+                        <div>
+                            <h:form id="frmCrear" >
+                                <p:messages id="mensaje" />
+
+                                <p:fieldset  legend="Informacion de Usuario"  style="border-style: solid; border-color: #000000; "  >
+                                    <h:panelGrid columns="3" id="pgDatos"  >
+
+                                        <p:outputLabel for="txtNombres" value="Nombres" />
+                                        <p:inputText id="txtNombres" value="#{personaController.persona.nombres}" required="true"/>
+                                        <p:message for="txtNombres"/>
+
+                                        <p:outputLabel for="txtApellidos" value="Apellidos" />
+                                        <p:inputText id="txtApellidos" value="#{personaController.persona.apellidos}" required="true"/>
+                                        <p:message for="txtApellidos"/>
+
+
+                                        <p:outputLabel for="cboCargo" value="Cargo" />
+                                        <p:selectOneMenu id="cboCargo" value="#{personaController.persona.cargo}" 
+                                                         converter="entityConverter">
+                                            <f:selectItem itemLabel="  --  Seleccione un Cargo --" itemValue="#{null}"/>
+                                            <f:selectItems value="#{personaController.lstCargos}" 
+                                                           itemLabel="#{cargo.cargo}" 
+                                                           itemValue="#{cargo}" var="cargo"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="cboCargo"/>
+
+                                        <p:outputLabel value="Establecimiento:" for="cboEstablecimiento"/>
+                                        <p:selectOneMenu id="cboEstablecimiento" value="#{personaController.persona.idEstablecimiento}" 
+                                                         converter="entityConverter" >
+                                            <f:selectItem itemLabel="  --  Seleccione un Establecimiento  --" itemValue="#{null}"/>
+                                            <f:selectItems value="#{personaController.lstEstablecimiento}"
+                                                           var="establecimiento"
+                                                           itemLabel="#{establecimiento.establecimiento}" 
+                                                           itemValue="#{establecimiento}"/>
+                                        </p:selectOneMenu>
+                                        <p:message for="cboEstablecimiento"/>
+
+                                    </h:panelGrid>
+                                </p:fieldset>
+                                <br/>
+                                <p:commandButton icon ="ui-icon-check" value="Registrar" 
+                                                 update="pgDatos,dlg" 
+                                                 actionListener="#{personaController.registrarPersona()}"
+                                                 onclick="PF('dlgRegistrar').hide();"
+                                                 />
+                                <p:commandButton value="Regresar" onclick="PF('dlgRegistrar').hide();"/>
+
+                            </h:form>
+                        </div>
+                    </p:dialog>
+                </div>
+
+
+
+
+                <!-- Div que contiene el dialogo para modificar el producto -->            
+                <div>
+                    <p:dialog id="dlg1" header="MODIFICAR CARGO" showEffect="modal"
+                              hideEffect="fade" widgetVar="dlgmodificar" modal="true">
+
+                        <div>
+                            <p:growl showDetail="No se realizo el registro"  showSummary="true" id="growl1"  />
+                            <p:messages id="mensaje" />
+                            <h:form id="frmModificar">
+                                <p:fieldset  legend="MODIFICAR CARGO" style="align-content: center;align-self: center" >
+                                    <div>
+                                        <p:panel id="panelDatos" header="DATOS DEL CARGO" toggleable="true" 
+                                                 toggleSpeed="500" closeSpeed="500" widgetVar="panelDt"
+                                                 style="align-content: center;align-items: center;width: content-box">
+
+                                            <div align="center"  style="padding: auto; width: 300"  >
+                                                <h:panelGrid cellpadding="15" columns="3" id="pgDatos"   style="align-items: center; align-content: center; "  columnClasses="centered" >
+
+                                                    <p:outputLabel for="txtCargo" value="Nombre del producto" />
+                                                    <p:inputText id="txtCargo" value="#{cargoBean.cargo.cargo}" required="true"/>
+                                                    <p:message for="txtCargo"/>
+
+
+                                                    <p:commandButton icon ="ui-icon-check" value="Modificar Producto" 
+
+                                                                     actionListener="#{cargoBean.modificarCargo()}"     
+                                                                     update=":frmMostrar,panelDatos, growl1" 
+                                                                     action="cargo?faces-redirect=true"
+                                                                     oncomplete="PF('dlgmodificar').hide();">
+                                                    </p:commandButton>
+                                                    <p:commandButton value="Regresar" onclick="PF('dlgmodificar').hide();"/>
+
+                                                </h:panelGrid>
+                                            </div>
+                                        </p:panel>
+                                        <br/>
+                                    </div>
+                                </p:fieldset>
+                            </h:form>
+                            <br/>
+
+                        </div>
+                    </p:dialog>
+
+                </div>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

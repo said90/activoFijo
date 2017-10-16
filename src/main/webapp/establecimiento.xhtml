@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./plantilla.xhtml">
+
+            <ui:define name="content">
+                <br/>
+                <br/>
+                <br/>
+
+
+                <p:separator/>
+                <br/>
+
+                <!-- Div que contiene el dataTable que muestra los Establecimientos -->            
+                <div>
+                    <p:panel  header="ESTABLECIMIENTOS REGISTRADOS" toggleable="true" toggleSpeed="1000">
+                        <h:form id="frmMostrar">
+                            <p:dataTable var="establecimiento" value="#{establecimientoController.lstEstablecimientos}"
+                                         emptyMessage="No hay productos en la base de datos"
+                                         paginator="true" rows="10" paginatorPosition="bottom"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}
+                                         {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10" reflow="true"   widgetVar="data" >
+
+                                <f:facet name="header" >
+                                    <p:outputPanel style="height: available">
+                                        <h:outputText value="Buscar en todos los campos" style="padding-right: 20px"/>
+                                        <p:inputText  id="globalFilter" onkeyup= "PF('data').filter()" placeholder="Ingrese cualquier palabra o numero"  style="width: 350px"/> 
+                                        <p:commandButton  
+                                            value="Registrar Establecimiento" icon="ui-icon-pencil"
+                                            onclick="PF('dlgRegistrar').show();">
+                                            <p:effect type="pulsate" event="click" />
+                                        </p:commandButton>
+                                    </p:outputPanel>
+                                    <p:separator/>
+                                    <BR/>
+
+                                </f:facet>
+
+
+
+                                <p:column headerText="Id Establecimiento"   style="text-align: center">
+                                    <h:outputText value="#{establecimiento.idEstablecimiento}"  />
+                                </p:column>
+
+                                <p:column headerText="Establecimiento"  style="text-align: center">
+                                    <p:outputLabel value="#{establecimiento.establecimiento}" />
+                                </p:column>
+
+                                <p:column headerText="MODIFICAR " style="text-align: center;">
+                                    <p:commandButton icon="ui-icon-pencil" oncomplete="PF('dlgmodificar').show();" 
+                                                     update=":frmModificar" > 
+                                        <f:setPropertyActionListener target="#{establecimientoBean.establecimiento}" value="#{establecimiento}"/>
+
+                                    </p:commandButton>
+                                </p:column>
+
+
+                            </p:dataTable>
+                        </h:form>
+                    </p:panel>>
+                </div>
+                <!-- Div que contiene el dialogo para Registrar el producto -->            
+                <div>
+                    <p:dialog id="dlg" header="Registrar Establecimiento" showEffect="fade" hideEffect="fade"
+                              widgetVar="dlgRegistrar" modal="true" draggable="false" resizable="false" minWidth="400"  >
+                        <div>
+                            <h:form id="frmCrear" >
+                                <p:messages id="mensaje" />
+
+                                <p:fieldset  legend="Informacion de Establecimiento"  style="border-style: solid; border-color: #000000; "  >
+                                    <h:panelGrid columns="3" id="pgDatos"  >
+
+                                        <p:outputLabel for="txtEstablecimiento" value="Nombre del Establecimiento" />
+                                        <p:inputText id="txtEstablecimiento" value="#{establecimientoController.establecimiento.establecimiento}"  style="width: 435PX" required="true"/>
+                                        <p:message for="txtEstablecimiento"/>
+
+
+                                    </h:panelGrid>
+                                </p:fieldset>
+                                <br/>
+                                <p:commandButton icon ="ui-icon-check" value="Registrar" 
+                                                 update="pgDatos,dlg" 
+                                                 actionListener="#{establecimientoController.registrarEstablecimiento()}"
+                                                 onclick="PF('dlgRegistrar').hide();"
+                                                 />
+                                <p:commandButton value="Regresar" onclick="PF('dlgRegistrar').hide();"/>
+
+                            </h:form>
+                        </div>
+                    </p:dialog>
+                </div>
+
+
+
+
+                <!-- Div que contiene el dialogo para modificar el producto -->            
+                <div>
+                    <p:dialog id="dlg1" header="MODIFICAR ESTABLECIMIENTO" showEffect="modal"
+                              hideEffect="fade" widgetVar="dlgmodificar" modal="true">
+
+                        <div>
+                            <p:growl showDetail="No se realizo el registro"  showSummary="true" id="growl1"  />
+                            <p:messages id="mensaje" />
+                            <h:form id="frmModificar">
+                                    <div>
+                                        <p:panel id="panelDatos" header="DATOS DEL ESTABLECIMIENTO" toggleable="true" 
+                                                 toggleSpeed="500" closeSpeed="500" widgetVar="panelDt"
+                                                 style="align-content: center;align-items: center;width: content-box">
+
+                                            <div align="center"  style="padding: auto; width: 300"  >
+                                                <h:panelGrid cellpadding="15" columns="3" id="pgDatos"   style="align-items: center; align-content: center; "  columnClasses="centered" >
+
+                                                    <p:outputLabel for="txtEstablecimiento" value="Nombre del Establecimiento" />
+                                                    <p:inputText id="txtEstablecimiento" value="#{establecimientoBean.establecimiento.establecimiento}" style="width: 435PX" required="true"/>
+                                                    <p:message for="txtEstablecimiento"/>
+
+
+                                                    <p:commandButton icon ="ui-icon-check" value="Modificar Establecimiento" 
+
+                                                                     actionListener="#{establecimientoBean.modificarEstablecimiento()}"     
+                                                                     update=":frmMostrar,panelDatos, growl1" 
+                                                                     action="establecimiento?faces-redirect=true"
+                                                                     oncomplete="PF('dlgmodificar').hide();">
+                                                    </p:commandButton>
+                                                    <p:commandButton value="Regresar" onclick="PF('dlgmodificar').hide();"/>
+
+                                                </h:panelGrid>
+                                            </div>
+                                        </p:panel>
+                                        <br/>
+                                    </div>
+                            </h:form>
+                            <br/>
+
+                        </div>
+                    </p:dialog>
+
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
