@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
@@ -11,28 +12,153 @@
 
 
             <ui:define name="content">
-                <h:form>
+                <h:form id="frm">
                     <p:panel>
                         <p:layout>
                             <p:layoutUnit  position="center">
                                 <p:panel header="Asignacion de Activos">
                                     <p:panelGrid columns="3">
-                                        <p:outputLabel value="Seleccione un activo"/>
-                                        <p:inputText/>
-                                        <p:commandButton value="+"/>
                                         <p:outputLabel value="Seleccione un usuario"/>
                                         <p:inputText/>
-                                        <p:commandButton value="+"/>
-
-
-
+                                        <p:commandButton value="+" onclick="PF('dlgRegistrarPersona').show();"/>
+                                        <p:outputLabel value="Seleccione un activo"/>
+                                        <p:inputText/>
+                                        <p:commandButton value="+" onclick="PF('dlgRegistrarActivo').show();"/>
                                     </p:panelGrid>
+
+                                    <p:carousel effect="easeInStrong" headerText="Usuario Asignacion" style="margin-bottom:0;width: 50%" >
+                                        <p:tab title="Godfather Part I">
+                                            <h:panelGrid columns="2" cellpadding="10">
+                                                <p:graphicImage name="demo/images/godfather/godfather1.jpg" />
+                                                <h:outputText value="#{asignacionActivoController.persona.nombres}" />
+                                                <h:outputText value="#{asignacionActivoController.persona.apellidos}" />
+                                                <h:outputText value="#{asignacionActivoController.persona.cargo.cargo}" />
+                                                <h:outputText value="#{asignacionActivoController.persona.idEstablecimiento.establecimiento}" />
+                                            </h:panelGrid>
+                                        </p:tab>
+                                    </p:carousel>
 
                                 </p:panel>
 
+                                <p:fieldset>
+                                    <p:dataList value="#{asignacionActivoController.persona}">
+                                      
+                                    </p:dataList>
+
+                                </p:fieldset>
+
                             </p:layoutUnit>
                         </p:layout>
+
+                        <div>
+                            <p:dialog id="dlg" header="Seleccion de Activos" showEffect="fade" hideEffect="fade"
+                                      widgetVar="dlgRegistrarActivo" modal="true" draggable="false" resizable="false" minWidth="400"  >
+                                <div>
+                                    <h:form id="frmCrear" >
+                                        <p:messages id="mensaje" />
+
+                                        <p:fieldset  legend="Informacion de Activos"  style="border-style: solid; border-color: #000000; "  >
+
+                                            <p:dataTable id="checkboxDT" var="activo" value="#{asignacionActivoController.lstAsignacion}" selection="#{asignacionActivoController.lstAsginacionUsuario}" 
+                                                         rowKey="#{activo.idAsignacion}" style="margin-bottom:0">
+                                                <f:facet name="header">
+                                                    Selesccione Activos Fijos para Asignar
+                                                </f:facet>
+                                                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                                <p:column headerText="Item">
+                                                    <h:outputText value="#{activo.idItem.item}" />
+                                                </p:column>
+                                                <p:column headerText="Marca">
+                                                    <h:outputText value="#{activo.marca}" />
+                                                </p:column>
+                                                <p:column headerText="Modelo">
+                                                    <h:outputText value="#{activo.modelo}" />
+                                                </p:column>
+                                                <p:column headerText="Serie">
+                                                    <h:outputText value="#{activo.serie}" />
+                                                </p:column>
+                                                <p:column headerText="Inventario Antg.">
+                                                    <h:outputText value="#{activo.inventarioA}" />
+                                                </p:column>
+                                                <p:column headerText="Inventario Nvo.">
+                                                    <h:outputText value="#{activo.inventarioN}" />
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                                    <p:commandButton process="checkboxDT" update="frm" icon="ui-icon-search" value="View" oncomplete="PF('multiCarDialog').show()" />
+                                                </f:facet>
+                                            </p:dataTable>
+
+                                        </p:fieldset>
+                                        <br/>
+                                        <p:commandButton icon ="ui-icon-check" value="Registrar" 
+                                                         actionListener="#{cargoController.resgistrarCargo()}"
+                                                         onclick="PF('dlgRegistrar').hide();"
+                                                         />
+                                        <p:commandButton value="Regresar" onclick="PF('dlgRegistrar').hide();"/>
+
+                                    </h:form>
+                                </div>
+                            </p:dialog>
+                        </div>
+
+                        <div>
+                            <p:dialog id="dlg1" header="Seleccion de Personas" showEffect="fade" hideEffect="fade"
+                                      widgetVar="dlgRegistrarPersona" modal="true" draggable="false" resizable="false" minWidth="400"  >
+                                <div>
+                                    <h:form id="frmCrear1" >
+                                        <p:dataTable var="usuario" value="#{asignacionActivoController.lstPersona}"
+                                                     emptyMessage="No hay usuarios en la base de datos"
+                                                     paginator="true" rows="10" paginatorPosition="bottom"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}
+                                                     {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="10" reflow="true"   widgetVar="data" >
+
+                                            <f:facet name="header" >
+                                                <p:outputPanel style="height: available">
+                                                    <h:outputText value="Buscar en todos los campos" style="padding-right: 20px"/>
+                                                    <p:inputText  id="globalFilter" onkeyup= "PF('data').filter()" placeholder="Ingrese cualquier palabra o numero"  style="width: 350px"/> 
+
+                                                </p:outputPanel>
+                                                <p:separator/>
+                                                <BR/>
+
+                                            </f:facet>
+
+                                            <p:column headerText="Nombre de usuario"  style="text-align: center">
+                                                <p:outputLabel value="#{usuario.nombres}" />
+                                            </p:column>
+
+                                            <p:column headerText="Apellido de usuario"  style="text-align: center">
+                                                <p:outputLabel value="#{usuario.apellidos}" />
+                                            </p:column>
+
+
+                                            <p:column headerText="Cargo"  style="text-align: center">
+                                                <p:outputLabel value="#{usuario.cargo.cargo}" />
+                                            </p:column>
+
+                                            <p:column headerText="Establecimiento"  style="text-align: center">
+                                                <p:outputLabel value="#{usuario.idEstablecimiento.establecimiento}"/>
+                                            </p:column>
+
+
+                                        </p:dataTable>
+                                        <br/>
+                                        <p:commandButton icon ="ui-icon-check" value="Registrar" 
+                                                         actionListener="#{cargoController.resgistrarCargo()}"
+                                                         onclick="PF('dlgRegistrar').hide();"
+                                                         />
+                                        <p:commandButton value="Regresar" onclick="PF('dlgRegistrar').hide();"/>
+
+                                    </h:form>
+                                </div>
+                            </p:dialog>
+                        </div>
+
                     </p:panel>
+
+
                 </h:form>
             </ui:define>
 

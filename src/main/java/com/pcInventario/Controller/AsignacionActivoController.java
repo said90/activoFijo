@@ -40,6 +40,7 @@ public class AsignacionActivoController implements Serializable {
     List<Persona> lstPersona;
     List<Asignacion> lstAsignacion;
     List<Item> lstItem;
+    List<Asignacion>lstAsginacionUsuario;
 
     @PostConstruct
     public void init() {
@@ -106,7 +107,14 @@ public class AsignacionActivoController implements Serializable {
     public void setLstItem(List<Item> lstItem) {
         this.lstItem = lstItem;
     }
-    
+
+    public List<Asignacion> getLstAsginacionUsuario() {
+        return lstAsginacionUsuario;
+    }
+
+    public void setLstAsginacionUsuario(List<Asignacion> lstAsginacionUsuario) {
+        this.lstAsginacionUsuario = lstAsginacionUsuario;
+    }
     
     
 
