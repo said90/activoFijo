@@ -7,6 +7,7 @@ package com.pcInventario.Model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -79,5 +80,32 @@ public class Persona implements Serializable {
     public void setIdEstablecimiento(Establecimiento idEstablecimiento) {
         this.idEstablecimiento = idEstablecimiento;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.idPersona);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Persona other = (Persona) obj;
+        if (!Objects.equals(this.idPersona, other.idPersona)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 
 }

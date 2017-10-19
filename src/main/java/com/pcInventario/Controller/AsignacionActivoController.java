@@ -41,6 +41,7 @@ public class AsignacionActivoController implements Serializable {
     List<Asignacion> lstAsignacion;
     List<Item> lstItem;
     List<Asignacion>lstAsginacionUsuario;
+    List<Asignacion>lstObtenerActivos;
 
     @PostConstruct
     public void init() {
@@ -49,8 +50,8 @@ public class AsignacionActivoController implements Serializable {
         item = new Item();
         lstPersona = personaEJB.findAll();
         lstItem = itemEJB.findAll();
-        lstAsignacion = asignacionEJB.findAll();
-
+        lstAsignacion = asignacionEJB.activosSinAsignar();
+        lstObtenerActivos= asignacionEJB.activosPorUsuario(persona);
     }
 
     public void registrarAsignacion() {
@@ -59,6 +60,25 @@ public class AsignacionActivoController implements Serializable {
         } catch (Exception e) {
         }
     }
+    
+    public void asignarActivosUsuario(){
+        try {
+            for (Asignacion asignacion1 : lstAsginacionUsuario) {
+                asignacion1.setIdPersona(persona);
+                asignacion1.setEstado(1);
+                asignacionEJB.edit(asignacion1);
+            }
+        } catch (Exception e) {
+        }
+    }
+    
+    
+   public void obtenerActivosPersona(){
+       
+       lstObtenerActivos=asignacionEJB.activosPorUsuario(persona);
+   }
+    
+    
 
     public Persona getPersona() {
         return persona;
@@ -115,6 +135,15 @@ public class AsignacionActivoController implements Serializable {
     public void setLstAsginacionUsuario(List<Asignacion> lstAsginacionUsuario) {
         this.lstAsginacionUsuario = lstAsginacionUsuario;
     }
+
+    public List<Asignacion> getLstObtenerActivos() {
+        return lstObtenerActivos;
+    }
+
+    public void setLstObtenerActivos(List<Asignacion> lstObtenerActivos) {
+        this.lstObtenerActivos = lstObtenerActivos;
+    }
+    
     
     
 

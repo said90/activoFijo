@@ -11,10 +11,8 @@
         <ui:composition template="./plantilla.xhtml">
 
 
-
-
             <ui:define name="content">
-                <h:form id="frm">
+                                <h:form id="frm">
                     <p:panel header="Asignacion de activos fijos" 
                              style="width: 1300px;margin: 0 auto; text-align:center">
                         <p:layout id="capaActivo" style="width: 100%; height: 600px">
@@ -42,10 +40,7 @@
                                         <h:outputText value="#{asignacionActivoController.persona.cargo.cargo}" style="font-weight: bold"/>
                                         <h:outputText value="Establecimiento: " style="font-weight: bold" />
                                         <h:outputText value="#{asignacionActivoController.persona.idEstablecimiento.establecimiento}" style="font-weight: bold"/>
-                                        <p:outputLabel value="Fecha de registro"/>
-                                        <p:calendar id="txtFecha"  navigator="true"  showOn="button"  
-                                                    yearRange="c-100:c-0" locale="es" pattern="dd/MM/yyyy" required="true" 
-                                                    value="#{asignacionActivoController.asignacion.fechaRegistro}" />
+
 
                                     </h:panelGrid>
                                     <p:separator/>
@@ -54,9 +49,9 @@
                                         <p:layoutUnit id="datosActivo" position="center" 
                                                       style="padding: 5px; text-align: justify;font-size: 14px" 
                                                       size="100">
-
-                                            <p:dataTable var="asignacion"  value="#{asignacionActivoController.lstAsginacionUsuario}"
-                                                         emptyMessage="No hay activos sin asignar"
+ 
+                                            <p:dataTable id="tblAsignacion" var="asignacion"  value="#{asignacionActivoController.lstObtenerActivos}"
+                                                         emptyMessage="No se ha seleccionado usuario"
                                                          paginator="true" rows="5" paginatorPosition="bottom"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks}
                                                          {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -66,7 +61,6 @@
                                                     <p:outputPanel style="height: available">
                                                         <h:outputText value="Buscar en todos los campos" style="padding-right: 20px"/>
                                                         <p:inputText  id="globalFilter" onkeyup= "PF('data').filter()" placeholder="Ingrese cualquier palabra o numero"  style="width: 350px"/> 
-                                                        <p:commandButton value=" Activos Fijos" onclick="PF('dlgRegistrarActivo').show();"/>
                                                     </p:outputPanel>
                                                     <p:separator/>
                                                     <BR/>
@@ -99,79 +93,13 @@
 
 
                                             </p:dataTable>
-                                            <p:commandButton process="txtFecha" value="Registrar Activos Fijos" oncomplete="#{asignacionActivoController.asignarActivosUsuario()}"
-                                                             update="frm" />
-
-
-
                                         </p:layoutUnit>
                                     </p:layout>
-
                                 </p:panel>
-
-
-
-
-
                             </p:layoutUnit>
                         </p:layout>
-
-
                     </p:panel>  
 
-                    <div>
-                        <p:dialog id="dlg" header="Seleccion de Activos" showEffect="fade" hideEffect="fade"
-                                  widgetVar="dlgRegistrarActivo" modal="true" draggable="false" resizable="false" minWidth="400"  >
-                            <div>
-                                <h:form id="frmCrear" >
-                                    <p:messages id="mensaje" />
-
-                                    <p:fieldset  legend="Informacion de Activos"  style="border-style: solid; border-color: #000000; "  >
-
-                                        <p:dataTable id="checkboxDT" var="activo" value="#{asignacionActivoController.lstAsignacion}" 
-                                                     selection="#{asignacionActivoController.lstAsginacionUsuario}" 
-                                                     rowKey="#{activo.idAsignacion}" style="margin-bottom:0">
-                                            <f:facet name="header">
-                                                Selesccione Activos Fijos para Asignar
-                                            </f:facet>
-                                            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-                                            <p:column headerText="Item">
-                                                <h:outputText value="#{activo.idItem.item}" />
-                                            </p:column>
-                                            <p:column headerText="Marca">
-                                                <h:outputText value="#{activo.marca}" />
-                                            </p:column>
-                                            <p:column headerText="Modelo">
-                                                <h:outputText value="#{activo.modelo}" />
-                                            </p:column>
-                                            <p:column headerText="Serie">
-                                                <h:outputText value="#{activo.serie}" />
-                                            </p:column>
-                                            <p:column headerText="Inventario Antg.">
-                                                <h:outputText value="#{activo.inventarioA}" />
-                                            </p:column>
-                                            <p:column headerText="Inventario Nvo.">
-                                                <h:outputText value="#{activo.inventarioN}" />
-                                            </p:column>
-
-                                            <f:facet name="footer">
-                                                <p:commandButton process="checkboxDT" 
-                                                                 update="frm" icon="ui-icon-search" value="Asignar" oncomplete="PF('dlgRegistrarActivo').hide()" />
-                                            </f:facet>
-                                        </p:dataTable>
-
-                                    </p:fieldset>
-                                    <br/>
-                                    <p:commandButton icon ="ui-icon-check" value="Registrar" 
-                                                     actionListener="#{cargoController.resgistrarCargo()}"
-                                                     onclick="PF('dlgRegistrar').hide();"
-                                                     />
-                                    <p:commandButton value="Regresar" onclick="PF('dlgRegistrar').hide();"/>
-
-                                </h:form>
-                            </div>
-                        </p:dialog>
-                    </div>
 
                     <div>
                         <p:dialog id="dlg1" header="Seleccion de Personas" showEffect="fade" hideEffect="fade"
@@ -214,8 +142,8 @@
                                         </p:column>
 
                                         <p:column headerText="Seleccionar">
-                                            <p:commandButton process="tablaUsuarios" value="Seleccionar"  oncomplete="PF('dlgRegistrarPersona').hide();" 
-                                                             update="frm"  > 
+                                            <p:commandButton process="tablaUsuarios ,#{asignacionActivoController.obtenerActivosPersona()}" value="Seleccionar"  oncomplete="PF('dlgRegistrarPersona').hide();" 
+                                                             update="frm,frm:tblAsignacion"  > 
                                                 <f:setPropertyActionListener value="#{usuario}" target="#{asignacionActivoController.persona}" />
                                             </p:commandButton>
                                         </p:column>
@@ -231,6 +159,9 @@
                         </p:dialog>
                     </div>  
                 </h:form>
+                
+                
+                
             </ui:define>
 
         </ui:composition>

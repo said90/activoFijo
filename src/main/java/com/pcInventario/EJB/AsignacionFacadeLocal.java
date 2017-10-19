@@ -6,6 +6,7 @@
 package com.pcInventario.EJB;
 
 import com.pcInventario.Model.Asignacion;
+import com.pcInventario.Model.Persona;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -29,5 +30,9 @@ public interface AsignacionFacadeLocal {
     List<Asignacion> findRange(int[] range);
 
     int count();
-    
+
+    List<Asignacion> activosSinAsignar();
+
+    List<Asignacion> activosPorUsuario(Persona persona);
+
 }
